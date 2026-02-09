@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +59,13 @@ fun HomeScreen(
     ) {
 
         PullToRefreshBox(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+//            .padding(
+//                top = innerPadding.calculateTopPadding(),
+//                bottom = innerPadding.calculateBottomPadding()
+//            )
             isRefreshing = isRefreshing,
             onRefresh = {
                 scope.launch {
@@ -68,17 +76,12 @@ fun HomeScreen(
                     items.addAll((currentMax + 1)..(currentMax + 8))
                     isRefreshing = false
                 }
-            },
-            modifier = Modifier
-                .fillMaxSize()
-//            .padding(
-//                top = innerPadding.calculateTopPadding(),
-//                bottom = innerPadding.calculateBottomPadding()
-//            )
+            }
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 8.dp,
                     end = 8.dp,

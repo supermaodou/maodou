@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +42,8 @@ import androidx.navigation.NavController
 @Composable
 fun DetailScreen(
     navController: NavController,
-    itemNumber: Int
+    itemNumber: Int,
+    innerPadding: PaddingValues
 ) {
     // Colors: #fb2c54, #fb8b25, #32c557, #00c3cc (与首页保持一致)
     val colors = listOf(
@@ -57,71 +59,54 @@ fun DetailScreen(
         shape = RoundedCornerShape(40.dp),
         shadowElevation = 10.dp
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("详情页面") },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
-                    }
-                )
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .background(MaterialTheme.colorScheme.background),
-                contentAlignment = Alignment.Center
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                // 圆形背景显示数字
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(backgroundColor),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // 圆形背景显示数字
-                    Box(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                            .background(backgroundColor),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = itemNumber.toString(),
-                            color = Color.White,
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // 描述文字
                     Text(
-                        text = "这是第 $itemNumber 个项目",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "点击返回按钮回到首页",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
+                        text = itemNumber.toString(),
+                        color = Color.White,
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            }
 
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // 描述文字
+                Text(
+                    text = "这是第 $itemNumber 个项目",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "点击返回按钮回到首页",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

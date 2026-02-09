@@ -76,7 +76,7 @@ fun LiquidSearchButton(
                     // press
                     awaitFirstDown()
                     animationScope.launch {
-                        progressAnimation.animateTo(1f, animationSpec)
+                        progressAnimation.animateTo(0.5f, animationSpec)
                     }
 
                     // release

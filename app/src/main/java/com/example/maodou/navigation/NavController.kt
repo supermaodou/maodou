@@ -27,7 +27,10 @@ import com.example.maodou.ui.screens.SettingsScreen
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SetupNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
+fun SetupNavGraph(
+    navController: NavHostController,
+    innerPadding: PaddingValues
+) {
     NavHost(
         navController = navController,
         startDestination = NavRoutes.HOME_ROUTE,
@@ -58,13 +61,13 @@ fun SetupNavGraph(navController: NavHostController, innerPadding: PaddingValues)
             HomeScreen(navController, innerPadding)
         }
         composable(NavRoutes.FAVORITES_ROUTE) {
-            FavoriteScreen(navController)
+            FavoriteScreen(navController, innerPadding)
         }
         composable(NavRoutes.PROFILE_ROUTE) {
-            ProfileScreen(navController)
+            ProfileScreen(navController, innerPadding)
         }
         composable(NavRoutes.SETTINGS_ROUTE) {
-            SettingsScreen(navController)
+            SettingsScreen(navController, innerPadding)
         }
         // 新增详情页面路由
         composable(
@@ -74,7 +77,8 @@ fun SetupNavGraph(navController: NavHostController, innerPadding: PaddingValues)
             val itemNumber = backStackEntry.arguments?.getInt("itemNumber") ?: 0
             DetailScreen(
                 navController,
-                itemNumber
+                itemNumber,
+                innerPadding
             )
         }
     }
