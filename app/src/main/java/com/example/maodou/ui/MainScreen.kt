@@ -1,76 +1,110 @@
 package com.example.maodou.ui
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.maodou.ui.components.BottomNavigationBar
-import com.example.maodou.ui.navigation.Screen
-import com.example.maodou.ui.screens.FavoriteScreen
-import com.example.maodou.ui.screens.HomeScreen
-import com.example.maodou.ui.screens.ProfileScreen
-import com.example.maodou.ui.screens.SettingsScreen
+import com.example.maodou.navigation.SetupNavGraph
+import com.example.maodou.navigation.bottomBarTabs
+import com.example.maodou.navigation.BottomNavigationBar
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
+@Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentBackStack by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStack?.destination?.route
 
-    Scaffold(
-        bottomBar = {
-            if (currentRoute != Screen.Settings.route) {
-                BottomNavigationBar(navController)
-            }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route,
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-            // Default transitions for bottom nav tabs (none or fade)
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
-        ) {
-            composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Favorite.route) { FavoriteScreen() }
-            composable(Screen.Profile.route) { ProfileScreen(navController) }
-            
-            // Custom transition only for Settings screen
-            composable(
-                route = Screen.Settings.route,
-                enterTransition = {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
-                },
-                exitTransition = {
-                     // Exiting to push another screen (if any) or when tab switching (unlikely from here)
-                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
-                },
-                popEnterTransition = {
-                    // This is not usually hit for Settings unless we push something on top of it and come back
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500))
-                },
-                popExitTransition = {
-                    // Back from Settings -> Profile
-                    // Current page scales down AND slides out to right
-                    scaleOut(targetScale = 0.9f, animationSpec = tween(500)) + 
-                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(500))
-                }
-            ) { SettingsScreen(navController) }
+    val backgroundColor = Color.White
+    val backdrop = rememberLayerBackdrop {
+        drawRect(backgroundColor)
+        drawContent()
+    }
+
+//    Box(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+
+    // 内容层 - 应用 layerBackdrop
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .layerBackdrop(backdrop)
+    ) {
+
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            // edge-to-edge
+//                    .windowInsetsPadding(WindowInsets.navigationBars),
+//                topBar = {
+//                    TopAppBar(
+//                        colors = topAppBarColors(
+//                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        title = {
+//                            Text("Top app bar")
+//                        }
+//                    )
+//                },
+            bottomBar = {},
+//                floatingActionButton = {
+//                    LiquidFloatingActionButton(
+//                        onClick = {
+//                            Log.e("LiquidFloatingActionButton", "Clicked")
+//                        },
+//                        shape = CircleShape
+//                    ) {
+//                        Icon(Icons.Default.Search, contentDescription = "Search")
+//                    }
+//                }
+        ) { innerPadding ->
+            SetupNavGraph(
+                navController = navController,
+                innerPadding = innerPadding
+            )
         }
     }
+
+    // 底部栏 - 使用 backdrop
+    Box(
+        modifier = Modifier
+//                .align(Alignment.BottomCenter)
+            .padding(bottom = 28.dp)
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.navigationBars)
+    ) {
+        BottomNavigationBar(
+            tabs = bottomBarTabs,
+            currentRoute = currentDestination,
+            backdrop = backdrop,
+            onTabSelected = { route ->
+                navController.navigate(route) {
+                    // 避免重复创建
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+    }
+//    }
 }

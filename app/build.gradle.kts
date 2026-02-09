@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.maodou"
-        minSdk = 34
+        minSdk = 33
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -21,7 +21,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,15 +42,27 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
+
+    // UI相关
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.compose)
 
-    implementation("io.github.kyant0:shapes:1.0.4")
-    implementation("io.github.kyant0:backdrop:1.0.4")
+    // 预测性返回
+    implementation("androidx.navigation:navigation-compose:2.9.7")
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.core.splashscreen)
+//    implementation("androidx.prediction:prediction-animation:1.0.0-beta01")
+
+    // 玻璃效果
+    implementation(libs.shapes)
+    implementation(libs.backdrop)
+
+    // 曲线
+    implementation(libs.capsule)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
